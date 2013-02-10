@@ -39,12 +39,16 @@ var RestService = (function () {
         this.url = url;
     }
     RestService.prototype.searchByName = function (name, resultHandler) {
-        var url = this.url;
-        if(name.length > 0) {
-            url += "/" + name;
+        var sendData = null;
+        if(name && name.length > 0) {
+            sendData = {
+                "name": name
+            };
         }
-        $.get(url, function (data) {
-            resultHandler(data);
+        $.getJSON(this.url, sendData).done(function (data) {
+            return resultHandler(data);
+        }).fail(function (jqHXR, textStatus, errorThrown) {
+            return console.log("getPosts failed. " + textStatus + errorThrown);
         });
     };
     RestService.prototype.addPost = function (name, comment, resultHandler) {
@@ -52,8 +56,16 @@ var RestService = (function () {
             "name": name,
             "comment": comment
         };
-        $.post(this.url, sendData, function (data) {
-            resultHandler();
+        $.ajax({
+            type: "POST",
+            url: this.url,
+            data: JSON.stringify(sendData),
+            contentType: "application/json",
+            dataType: "text"
+        }).done(function (data) {
+            return resultHandler();
+        }).fail(function (jqHXR, textStatus, errorThrown) {
+            return console.log("addPost failed. " + textStatus + errorThrown);
         });
     };
     return RestService;

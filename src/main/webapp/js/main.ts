@@ -54,20 +54,25 @@ class RestService {
     }
 
     searchByName(name: string, resultHandler: (posts: any[]) => void) {
-        var url = this.url
-        if (name.length > 0) {
-            url += "/" + name
+        var sendData = null
+        if (name && name.length > 0) {
+            sendData = { "name": name }
         }
-
-        $.get(url, (data) => {
-            resultHandler(data)
-        })
+        $.getJSON(this.url, sendData)
+            .done((data) => resultHandler(data))
+            .fail((jqHXR, textStatus, errorThrown) => console.log("getPosts failed. " + textStatus + errorThrown))
     }
 
     addPost(name: string, comment: string, resultHandler: () => void) {
         var sendData = { "name" : name , "comment" : comment }
-        $.post(this.url, sendData, (data) => {
-            resultHandler()
+        $.ajax({
+            type: "POST",
+            url: this.url, 
+            data: JSON.stringify(sendData), 
+            contentType: "application/json",
+            dataType: "text"
         })
+        .done((data) => resultHandler())
+        .fail((jqHXR, textStatus, errorThrown) => console.log("addPost failed. " + textStatus + errorThrown))
     }
 }

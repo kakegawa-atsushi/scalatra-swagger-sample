@@ -8,10 +8,15 @@ import javax.servlet.ServletContext
  * run at application start (e.g. database configurations), and init params.
  */
 class Scalatra extends LifeCycle {
+
+  implicit val swagger = new SwaggerTestSwagger
+
   override def init(context: ServletContext) {
-    // REST APIを叩くサンプルクライアントページを返すコントローラをマウント
+    // REST APIを叩くサンプルクライアントページを提供するコントローラをマウント
     context.mount(new RootController, "/*")
     // REST APIのルーティングを行うコントローラをマウント
     context.mount(new SwaggerTestController, "/posts/*")
+    // SwaggerのJSON specを提供するコントローラをマウント
+    context.mount(new ResourcesApp, "/api-docs/*")
   }
 }

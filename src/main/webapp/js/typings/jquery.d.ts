@@ -175,14 +175,14 @@ interface JQueryStatic {
 
     ajaxSetup(options: any);
 
-    get(url: string, data?: any, success?: any, dataType?: any): JQueryXHR;
-    getJSON(url: string, data?: any, success?: any): JQueryXHR;
-    getScript(url: string, success?: any): JQueryXHR;
+    get(url: string, data?: any, success?: any, dataType?: any);
+    getJSON(url: string, data?: any, success?: any);
+    getScript(url: string, success?: any);
 
     param(obj: any): string;
     param(obj: any, traditional: bool): string;
 
-    post(url: string, data?: any, success?: any, dataType?: any): JQueryXHR;
+    post(url: string, data?: any, success?: any, dataType?: any);
 
     /*********
      CALLBACKS
