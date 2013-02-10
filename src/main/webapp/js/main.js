@@ -6,14 +6,19 @@ $(function () {
 });
 var ViewModel = (function () {
     function ViewModel() {
-        this.posts = ko.observableArray(null);
+        var _this = this;
+        this.posts = ko.observableArray();
+        this.name = ko.observable();
+        this.comment = ko.observable();
+        this.sendButtonEnable = ko.computed(function () {
+            return _this.name() && _this.name().length > 0 && _this.comment() && _this.comment().length > 0;
+        }, this);
+        this.searchName = ko.observable();
         this.service = new RestService("http://localhost:8080/posts");
     }
     ViewModel.prototype.sendButtonClickHandler = function (event) {
         var _this = this;
-        var name = $("#nameInput").val();
-        var comment = $("#commentInput").val();
-        this.service.addPost(name, comment, function () {
+        this.service.addPost(this.name(), this.comment(), function () {
             _this.clearPostInputs();
             _this.executeSearch();
         });
@@ -23,14 +28,13 @@ var ViewModel = (function () {
     };
     ViewModel.prototype.executeSearch = function () {
         var _this = this;
-        var name = $("#searchInput").val();
-        this.service.searchByName(name, function (posts) {
+        this.service.searchByName(this.searchName(), function (posts) {
             return _this.posts(posts);
         });
     };
     ViewModel.prototype.clearPostInputs = function () {
-        $("#nameInput").val("");
-        $("#commentInput").val("");
+        this.name("");
+        this.comment("");
     };
     return ViewModel;
 })();

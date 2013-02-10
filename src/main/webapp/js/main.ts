@@ -12,17 +12,26 @@ $(() => {
 class ViewModel {
 
     posts: KnockoutObservableArray;
+    name: KnockoutObservableString;
+    comment: KnockoutObservableString;
+    sendButtonEnable: KnockoutComputed;
+    searchName: KnockoutObservableString;
     service: RestService;
 
     constructor() {
-        this.posts = ko.observableArray(null)
+        this.posts = ko.observableArray()
+        this.name = ko.observable()
+        this.comment = ko.observable()
+        this.sendButtonEnable = ko.computed(() => {
+            return this.name() && this.name().length > 0 
+                && this.comment() && this.comment().length > 0
+        }, this)
+        this.searchName = ko.observable()
         this.service = new RestService("http://localhost:8080/posts")
     }
 
     sendButtonClickHandler(event) {
-        var name = $("#nameInput").val()
-        var comment = $("#commentInput").val()
-        this.service.addPost(name, comment, () => {
+        this.service.addPost(this.name(), this.comment(), () => {
             this.clearPostInputs()
             this.executeSearch()
         })
@@ -33,15 +42,14 @@ class ViewModel {
     }
 
     executeSearch() {
-        var name = $("#searchInput").val()
-        this.service.searchByName(name, (posts) =>
+        this.service.searchByName(this.searchName(), (posts) =>
             this.posts(posts)
         )
     }
 
     clearPostInputs() {
-        $("#nameInput").val("")
-        $("#commentInput").val("")
+        this.name("")
+        this.comment("")
     }
 }
 
